@@ -2,7 +2,7 @@
 ```
 <div>Teachable Machine Audio Model</div>
 ```
-Кнопка "Начать" работу с моделью (рисунок 1)
+Кнопка "Начать" работу с моделью 
 ```
 <button type="button" onclick="init()">Start</button>
 ```
@@ -50,91 +50,141 @@ undefined
             checkpointURL,
             metadataURL);
 ```
-        // убедимся, что модель и метаданные загружаются через HTTPS-запросы.
+Убедимся, что модель и метаданные загружаются через HTTPS-запросы
+```
         await recognizer.ensureModelLoaded();
-
+```
+По итогу функции createModel() вернём распознаватель: 
+```
         return recognizer;
-    }
+```
+Зададим функцию init(), в которой await приостанавливает выполнение функции async и ожидает ответа от переданного Promise, затем возобновляя выполнение функции async и возвращая полученное значение,
 
-    async function init() {
-        const recognizer = await createModel(); //await приостанавливает выполнение функции async и ожидает ответа от переданного Promise, затем возобновляя выполнение функции async и возвращая полученное значение
-        const classLabels = recognizer.wordLabels(); // получим метки классов
-        const labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < classLabels.length; i++) { //видимо для каждого созданного контейнера создаём свою метку классов
+получаем метки классов, с помощью
+```
+const classLabels = recognizer.wordLabels();
+```
+для каждого созданного контейнера создаём свою метку классов:
+```
+ for (let i = 0; i < classLabels.length; i++) { 
             labelContainer.appendChild(document.createElement("div"));
         }
+```
+Собереём итоговую функцию init():
+```
+    async function init() {
+        const recognizer = await createModel(); 
+        const classLabels = recognizer.wordLabels(); 
+        const labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < classLabels.length; i++) { 
+            labelContainer.appendChild(document.createElement("div"));
+        }
+```
+Функция listen() принимает 2 аргумента:
 
-        // функция listen() принимает 2 аргумента:
-        // 1. Функция обратного вызова, которая вызывается каждый раз, когда распознается слово
-        // 2. Объект конфигурации с настраиваемыми полями
-	// этой функцией мы можем количественно оценить ошибку модели: чем меньшую вероятность модель назначает верному элементу, тем сильнее ошибка
+1. Функция обратного вызова, которая вызывается каждый раз, когда распознается слово
+   
+2. Объект конфигурации с настраиваемыми полями
+  
+Этой функцией мы можем количественно оценить ошибку модели: чем меньшую вероятность модель назначает верному элементу, тем сильнее ошибка
+
+В ней: вероятность предсказания для каждого класса(вместо одного числа модель должна предсказывать распределение вероятностей на множестве), определяется так:
+```
+const scores = result.scores;
+```
+Визуализация оценки вероятности для каждого класса (зависимость между исходными данными и целевыми данными), происходит так:
+```
+for (let i = 0; i < classLabels.length; i++) { 
+                const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+            }
+```
+Таким образом мы позволим модели "сомневаться" в предсказании.
+
+В случае, если прослушивание должно вернуть result.spectrogram, для этого пишем:
+```
+includeSpectrogram: true
+```
+Порог вероятности обозначим:
+```
+probabilityThreshold: 0.75
+```
+Теперь запишем всю фунцию listen() целиком:
+```
         recognizer.listen(result => {
-            const scores = result.scores; // вероятность предсказания для каждого класса(вместо одного числа модель должна предсказывать распределение вероятностей на множестве)
-            // визуализировать оценки вероятности для каждого класса (зависимость между исходными данными и целевыми данными)
-            for (let i = 0; i < classLabels.length; i++) {  // Таким образом мы позволим модели "сомневаться" в предсказании
+            const scores = result.scores; 
+          
+            for (let i = 0; i < classLabels.length; i++) {  
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
             }
         }, {
-            includeSpectrogram: true, //  в случае, если прослушивание должно вернуть result.spectrogram
-            probabilityThreshold: 0.75, //порог вероятности
-            invokeCallbackOnNoiseAndUnknown: true, (1 в listen())
-            overlapFactor: 0.50 // вероятно, нужно от 0,5 до 0,75
+            includeSpectrogram: true, 
+            probabilityThreshold: 0.75, 
+            invokeCallbackOnNoiseAndUnknown: true, 
+            overlapFactor: 0.50 
         });
+```
+Далее можно добавить:
 
-        // Остановите распознавание за 5 секунд
-        // setTimeout(() => recognizer.stopListening(), 5000); ??? не поняла про какую функцию речь
-    }
-</script>
+Чтобы остановить распознавание за 5 секунд
+```
+setTimeout(() => recognizer.stopListening(), 5000);
+```
 
 Рассмотрим библиотеку, которую составила программа:
-
+```
 <div>Teachable Machine Audio Model - p5.js and ml5.js</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
 <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 <script type="text/javascript">
-  // Глобальная переменная для хранения классификатора
+```
+Глобальная переменная для хранения классификатора
+```
 let classifier;
-
-// заведём метку
+```
+Заведём метку
+```
 let label = 'listening...';
-
-// Teachable Machine model URL:
+```
+Teachable Machine model URL:
+```
 let soundModel = 'https://teachablemachine.withgoogle.com/models/C95zKtD-T/';
-
-
+```
+Загрузим модель
+```
 function preload() {
-  // загрузим модель
   classifier = ml5.soundClassifier(soundModel + 'model.json');
 }
-
+```
+Начнём классификацию, при этом звуковая модель будет постоянно слушать микрофон
+```
 function setup() {
   createCanvas(320, 240);
-  // начнём классификацию
-  // звуковая модель будет постоянно слушать микрофон
   classifier.classify(gotResult);
 }
-
+```
+Нарисуем метку на холсте? далее её параметры
+```
 function draw() {
   background(0);
-  // Нарисуем метку на холсте? далее её параметры
   fill(255);
   textSize(32);
   textAlign(CENTER, CENTER);
   text(label, width / 2, height / 2);
 }
-
-
-// Модель, распознающая звук, вызовет это событие.
-function gotResult(error, results) { //обработка при ошибках
+```
+Модель, распознающая звук, вызовет это событие, также производит обработку ошибок
+```
+function gotResult(error, results) { 
   if (error) {
     console.error(error);
     return;
   }
-  // Результаты представляют собой упорядоченный массив
+```
+Результаты представляют собой упорядоченный массив
+```
   // console.log(results[0]);
   label = results[0].label;
-}
-</script>
-
+```
