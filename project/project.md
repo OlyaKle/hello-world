@@ -1,11 +1,20 @@
 Тег div - пустой контейнер, своего рода «перенос» содержания на новую строку (вроде разрыва страницы или разрыва строки в текстовых редакторах)
-
-<div>Teachable Machine Audio Model</div> // Тег <div> - пустой контейнер, своего рода «перенос» содержания на новую строку (вроде разрыва страницы или разрыва строки в текстовых редакторах)
-<button type="button" onclick="init()">Start</button> // кнопка "Начать" работу с моделью (рисунок 1)
-<div id="label-container"></div> // элемент <label> текстовый компонент, отображающий статический текст либо значение атрибута сущности
+```
+<div>Teachable Machine Audio Model</div>
+```
+Кнопка "Начать" работу с моделью (рисунок 1)
+```
+<button type="button" onclick="init()">Start</button>
+```
+Элемент label текстовый компонент, отображающий статический текст либо значение атрибута сущности
+```
+<div id="label-container"></div> 
+```
+Если JavaScript-кода много – его выносят в отдельный файл, который подключается в HTML
+```
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script> //Если JavaScript-кода много – его выносят в отдельный файл, который подключается в HTML
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
-
+```
 <script type="text/javascript"> //браузер понимает, что содержимое тега <script> должно быть интерпретировано как код на JavaScript, и выполняет его соответствующим образом
 
     async function createModel() { //ключевое слово async перед функцией гарантирует, что эта функция в любом случае вернёт промис(как я поняла это, что-то вроде def, а промис это - return <значение>)
