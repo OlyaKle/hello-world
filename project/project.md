@@ -15,12 +15,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script> //Если JavaScript-кода много – его выносят в отдельный файл, который подключается в HTML
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
 ```
-<script type="text/javascript"> //браузер понимает, что содержимое тега <script> должно быть интерпретировано как код на JavaScript, и выполняет его соответствующим образом
+Браузер понимает, что содержимое тега <script> должно быть интерпретировано как код на JavaScript, и выполняет его соответствующим образом
+```
+<script type="text/javascript"> 
+```
+Ключевое слово async перед функцией гарантирует, что эта функция в любом случае вернёт промис(как я поняла это, что-то вроде def, а промис это - return <значение>),
 
-    async function createModel() { //ключевое слово async перед функцией гарантирует, что эта функция в любом случае вернёт промис(как я поняла это, что-то вроде def, а промис это - return <значение>)
-        const checkpointURL = URL + "model.json"; // создаём константу - модель топологии
-        const metadataURL = URL + "metadata.json"; // создаём константу - модель метадата
-
+В функции: создаём константы - модель топологии, модель метадата
+```
+const checkpointURL = URL + "model.json"; 
+const metadataURL = URL + "metadata.json";
+```
+    async function createModel() { 
+        const checkpointURL = URL + "model.json"; 
+        const metadataURL = URL + "metadata.json"; 
         const recognizer = speechCommands.create( //фнкция которая будет распознавать речь с помощью web speech API
             "BROWSER_FFT", // тип преобразования Фурье, для спектрального анализа звуковых данных
             undefined, // функция словаря речевых команд, не имеющих пользу для модели
