@@ -26,15 +26,30 @@
 const checkpointURL = URL + "model.json"; 
 const metadataURL = URL + "metadata.json";
 ```
+Соберём функцию:
+```
     async function createModel() { 
         const checkpointURL = URL + "model.json"; 
-        const metadataURL = URL + "metadata.json"; 
-        const recognizer = speechCommands.create( //фнкция которая будет распознавать речь с помощью web speech API
-            "BROWSER_FFT", // тип преобразования Фурье, для спектрального анализа звуковых данных
-            undefined, // функция словаря речевых команд, не имеющих пользу для модели
+        const metadataURL = URL + "metadata.json";
+```
+Функция которая будет распознавать речь с помощью web speech API, в которой
+
+тип преобразования Фурье, для спектрального анализа звуковых данных:
+```
+"BROWSER_FFT"
+```
+функция словаря речевых команд, не имеющих пользу для модели:
+```
+undefined
+```
+Тогда функция будет выглядеть так
+```
+        const recognizer = speechCommands.create( 
+            "BROWSER_FFT", 
+            undefined, 
             checkpointURL,
             metadataURL);
-
+```
         // убедимся, что модель и метаданные загружаются через HTTPS-запросы.
         await recognizer.ensureModelLoaded();
 
