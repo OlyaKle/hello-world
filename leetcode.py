@@ -1,19 +1,11 @@
 class Solution:
-    def maxSatisfaction(self, satisfaction):
-        satisfaction.sort(reverse=True)
-        ans = s = 0
-        for x in satisfaction:
-            s += x
-            if s <= 0:
-                break
-            ans += s
-        self.ans = ans
-
-if __name__ == '__main__':
-    s = [-1,-8,0,5,-9]
-    ss = [4,3,2]
-    sss = [-1,-4,-5]
-
-    print(Solution.maxSatisfaction(s))
-    print(Solution.maxSatisfaction(ss))
-    print(Solution.maxSatisfaction(sss))
+    def maxScoreWords(self, words: List[str], letters: List[str], score: List[int]) -> int:
+        cnt = Counter(letters)
+        n = len(words)
+        ans = 0
+        for i in range(1 << n):
+            cur = Counter(''.join([words[j] for j in range(n) if i >> j & 1]))
+            if all(v <= cnt[c] for c, v in cur.items()):
+                t = sum(v * score[ord(c) - ord('a')] for c, v in cur.items())
+                ans = max(ans, t)
+        return ans
